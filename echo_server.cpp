@@ -11,11 +11,7 @@
 
 using namespace std;
 
-<<<<<<< HEAD
 const unsigned port;
-=======
-const unsigned port = 28109;
->>>>>>> a0c61d4c4d58d79d61a5548826d9abb3f17625d5
 const unsigned MAXBUFLEN = 512;
 
 map<string, int> user_info;
@@ -128,7 +124,7 @@ int main()
                 cout << endl;
 
                 string reply;
-                reply = cmd2 + ", you have successfully logged out";
+                reply = "Welcome " + cmd2 + ", you have successfully logged in";
                 write(cli_sockfd, reply.c_str(), reply.length());
             }
             memset(buf, 0, sizeof buf);

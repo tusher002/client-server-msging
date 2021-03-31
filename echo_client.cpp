@@ -67,38 +67,14 @@ int main(int argc, char **argv)
 	}
 	string oneline;
 
-<<<<<<< HEAD
-=======
-	FD_ZERO(&orig_set);
-    FD_SET(STDIN_FILENO, &orig_set);
-    FD_SET(sockfd, &orig_set);
-    if (sockfd > STDIN_FILENO) maxf = sockfd+1;
-    else maxf = STDIN_FILENO+ 1;
->>>>>>> a0c61d4c4d58d79d61a5548826d9abb3f17625d5
 
 	/* Does this program have problems? Yes.
 	 * The client may be blocked forever after the server crashes or closes
 	 * the connection. FOREVER: until user types a line. Otherwise, the client
 	 * program is blocked on getline().
 	 */
-	while (1)
+	while (getline(cin, oneline))
     {
-        rset = orig_set;
-        select(maxf, &rset, NULL, NULL, NULL);
-        if (FD_ISSET(sockfd, &rset))
-        {
-            if (read(sockfd, buf, 100) == 0)
-            {
-              printf("server crashed.\n");
-              exit(0);
-            }
-        }
-        if (FD_ISSET(STDIN_FILENO, &rset))
-        {
-          if (getline(cin, oneline) == NULL) exit(0);
-          write(sockfd, buf, strlen(buf+1));
-        }
-
 		if (oneline == "exit")
 		{
 			close(sockfd);
@@ -161,7 +137,7 @@ int main(int argc, char **argv)
                         {
                             if (m == 0)
                             {
-                                cout << "server closed" << endl;
+                                cout << "server closedd" << endl;
                             } else
                             {
                                 cout << "something wrong" << endl;
