@@ -9,6 +9,14 @@
 #include <netdb.h>
 #include <string>
 #include <map>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -16,11 +24,10 @@ using namespace std;
 //const unsigned serv_port = 5100;
 const unsigned MAXBUFLEN = 512;
 
-map<int, int> gquiz1;
-
 int main(int argc, char **argv)
 {
-	int sockfd, rv, flag;
+	int sockfd, rv, flag, maxf;
+	fd_set  rset, orig_set;
 	ssize_t n, m;
 	char buf[MAXBUFLEN];
 	char output[MAXBUFLEN];
@@ -68,95 +75,113 @@ int main(int argc, char **argv)
 	string oneline;
 
 
-	/* Does this program have problems? Yes.
-	 * The client may be blocked forever after the server crashes or closes
-	 * the connection. FOREVER: until user types a line. Otherwise, the client
-	 * program is blocked on getline().
-	 */
-	while (getline(cin, oneline))
+	FD_ZERO(&orig_set);
+    (STDIN_FILENO, &orig_set);
+    FD_SET(sockfd, &orig_set);
+    if (sockfd > STDIN_FILENO) maxf = sockfd+1;
+    else maxf = STDIN_FILENO+ 1;
+
+	while (1)
     {
-		if (oneline == "exit")
-		{
-			close(sockfd);
-			return 0;
-		}
-		else
+        rset = orig_set;
+        select(maxf, &rset, NULL, NULL, NULL);
+        if (FD_ISSET(sockfd, &rset))
         {
-            string command;
-            command = oneline;
-            command = command + " ";
-            string cmd1, cmd, cmd2;
-            cmd = command;
-            cmd1 = "";
-            cmd2 = "";
-            int pos1 = command.find(" ");
-            command.pop_back();
-            int len = command.length();
-            cmd1 = cmd.erase(pos1, len);
-            cmd2 = command.erase(0, pos1+1);
-
-            if(cmd1 == "login")
+            if (read(sockfd, buf, 100) == 0)
             {
-                write(sockfd, oneline.c_str(), oneline.length());
-                n = read(sockfd, buf, MAXBUFLEN);
-                if (n <= 0)
-                {
-                    if (n == 0)
-                    {
-                        cout << "server closed" << endl;
-                    } else
-                    {
-                        cout << "something wrong" << endl;
-                    }
-                    close(sockfd);
-                    exit(0);
-                }
+                printf("server crashed.\n");
+                exit(0);
+            }
+            printf("Server response : %s\n", buf);
+        }
 
-                buf[n] = '\0';
-                cout << buf << endl;
+        if (FD_ISSET(STDIN_FILENO, &rset))
+        {
+            if (fgets(oneline, MAXBUFLEN, stdin) == NULL) exit(0);
 
-                string command2;
-                while (getline(cin, command2))
-                {
-                    string cmd_nxt;
-                    cmd_nxt = command2;
-                    cmd_nxt = cmd_nxt + " ";
-                    string cmd1_nxt;
-                    cmd1_nxt = "";
-                    int pos_next = cmd_nxt.find(" ");
-                    int len2 = cmd_nxt.length();
-                    cmd1_nxt = cmd_nxt.erase(pos_next, len2);
-
-                    if(cmd1_nxt == "logout")
-                    {
-                        cout<<"---------"<<endl<<cmd2<<endl;
-                        command2 = command2 + " " + cmd2;
-                        write(sockfd, command2.c_str(), command2.length());
-                        m = read(sockfd, output, MAXBUFLEN);
-                        if (m <= 0)
-                        {
-                            if (m == 0)
-                            {
-                                cout << "server closedd" << endl;
-                            } else
-                            {
-                                cout << "something wrong" << endl;
-                            }
-                            close(sockfd);
-                            exit(0);
-                        }
-
-                        output[m] = '\0';
-                        cout << output << endl;
-                        break;
-                    }
-                }
+            if (oneline == "exit")
+            {
+                close(sockfd);
+                return 0;
             }
             else
             {
-                cout<<"You need to log in first"<<endl;
+                string command;
+                command = oneline;
+                command = command + " ";
+                string cmd1, cmd, cmd2;
+                cmd = command;
+                cmd1 = "";
+                cmd2 = "";
+                int pos1 = command.find(" ");
+                command.pop_back();
+                int len = command.length();
+                cmd1 = cmd.erase(pos1, len);
+                cmd2 = command.erase(0, pos1+1);
+
+                if(cmd1 == "login")
+                {
+                    write(sockfd, oneline.c_str(), oneline.length());
+                    n = read(sockfd, buf, MAXBUFLEN);
+                    if (n <= 0)
+                    {
+                        if (n == 0)
+                        {
+                            cout << "server closed" << endl;
+                        } else
+                        {
+                            cout << "something wrong" << endl;
+                        }
+                        close(sockfd);
+                        exit(0);
+                    }
+
+                    buf[n] = '\0';
+                    cout << buf << endl;
+
+                    string command2;
+                    while (getline(cin, command2))
+                    {
+                        string cmd_nxt;
+                        cmd_nxt = command2;
+                        cmd_nxt = cmd_nxt + " ";
+                        string cmd1_nxt;
+                        cmd1_nxt = "";
+                        int pos_next = cmd_nxt.find(" ");
+                        int len2 = cmd_nxt.length();
+                        cmd1_nxt = cmd_nxt.erase(pos_next, len2);
+
+                        if(cmd1_nxt == "logout")
+                        {
+                            cout<<"---------"<<endl<<cmd2<<endl;
+                            command2 = command2 + " " + cmd2;
+                            write(sockfd, command2.c_str(), command2.length());
+                            m = read(sockfd, output, MAXBUFLEN);
+                            if (m <= 0)
+                            {
+                                if (m == 0)
+                                {
+                                    cout << "server closedd" << endl;
+                                } else
+                                {
+                                    cout << "something wrong" << endl;
+                                }
+                                close(sockfd);
+                                exit(0);
+                            }
+
+                            output[m] = '\0';
+                            cout << output << endl;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    cout<<"You need to log in first"<<endl;
+                }
             }
-		}
+        }
 	}
 }
 
