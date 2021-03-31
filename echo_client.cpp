@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 	fd_set  rset, orig_set;
 	ssize_t n, m;
 	char buf[MAXBUFLEN];
+	char buffer[MAXBUFLEN];
 	char output[MAXBUFLEN];
 	struct addrinfo hints, *res, *ressave;
 
@@ -72,7 +73,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "cannot connect\n");
 		exit(1);
 	}
-	string oneline;
+
 
 
 	FD_ZERO(&orig_set);
@@ -97,8 +98,9 @@ int main(int argc, char **argv)
 
         if (FD_ISSET(STDIN_FILENO, &rset))
         {
-            if (fgets(oneline, MAXBUFLEN, stdin) == NULL) exit(0);
+            if (fgets(buffer, MAXBUFLEN, stdin) == NULL) exit(0);
 
+            string oneline(buffer);
             if (oneline == "exit")
             {
                 close(sockfd);
