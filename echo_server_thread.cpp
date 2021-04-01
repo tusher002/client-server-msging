@@ -63,7 +63,7 @@ void *process_connection(void *arg)
             cout << endl;
 
             string reply;
-            reply = "Welcome " + cmd2 + ", you have successfully logged in";
+            reply = "Welcome " + cmd2 + "You have successfully logged in";
             write(sockfd, reply.c_str(), reply.length());
         }
         else if(cmd1 == "logout")
@@ -79,7 +79,7 @@ void *process_connection(void *arg)
             cout << endl;
 
             string reply;
-            reply = "Welcome " + cmd2 + ", you have successfully logged in";
+            reply = "You have successfully logged in";
             write(sockfd, reply.c_str(), reply.length());
         }
         memset(buf, 0, sizeof buf);
