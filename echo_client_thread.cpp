@@ -8,7 +8,16 @@
 #include <stdlib.h>
 #include <netdb.h>
 #include <string>
-#include <pthread.h>
+#include <map>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 const unsigned MAXBUFLEN = 512;
