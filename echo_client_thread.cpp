@@ -141,6 +141,7 @@ int main(int argc, char **argv)
                 }
 
             string oneline(buffer);
+            oneline.pop_back();
             if (oneline == "exit")
             {
                 close(sockfd);
@@ -181,6 +182,7 @@ int main(int argc, char **argv)
                     buf[n] = '\0';
                     cout << buf << endl;
                     string command2;
+                    command2.pop_back();
                     cout<<"--------------------1"<<endl;
 
                     FD_ZERO(&orig_set);
@@ -224,6 +226,7 @@ int main(int argc, char **argv)
                             cmd1_nxt = cmd_nxt.erase(pos_next, len2);
                             cout<<"--------------------6"<<endl;
                             cout<<cmd1_nxt<<endl;
+                            cout<<"--------------------7"<<endl;
 
                             if(cmd1_nxt == "logout")
                             {
