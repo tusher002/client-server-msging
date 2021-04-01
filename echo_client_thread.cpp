@@ -182,7 +182,7 @@ int main(int argc, char **argv)
                     buf[n] = '\0';
                     cout << buf << endl;
                     string command2;
-                    command2.pop_back();
+
                     cout<<"--------------------1"<<endl;
 
                     FD_ZERO(&orig_set);
@@ -216,6 +216,7 @@ int main(int argc, char **argv)
                                 exit(0);
                             }
                             string command2(buffer1);
+                            command2.pop_back();
                             string cmd_nxt;
                             cmd_nxt = command2;
                             cmd_nxt = cmd_nxt + " ";
