@@ -109,7 +109,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    pthread_create(&tid, NULL, &process_connection, NULL);
+    //pthread_create(&tid, NULL, &process_connection, NULL);
 
     FD_ZERO(&orig_set);
     FD_SET(STDIN_FILENO, &orig_set);
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
         {
             if (read(sockfd, buf, MAXBUFLEN) == 0)
             {
-                printf("Server crashed.\n");
+                //printf("Server crashed.\n");
                 close(sockfd);
                 exit(0);
             }
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
                         {
                             if (read(sockfd, buf1, MAXBUFLEN) == 0)
                             {
-                                printf("Server crashed.\n");
+                                //printf("Server crashed.\n");
                                 close(sockfd);
                                 exit(0);
                             }
@@ -223,6 +223,7 @@ int main(int argc, char **argv)
                             int len2 = cmd_nxt.length();
                             cmd1_nxt = cmd_nxt.erase(pos_next, len2);
                             cout<<"--------------------6"<<endl;
+                            cout<<cmd1_nxt<<endl;
 
                             if(cmd1_nxt == "logout")
                             {
