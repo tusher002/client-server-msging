@@ -11,7 +11,7 @@
 
 using namespace std;
 
-const unsigned port;
+int port;
 const unsigned MAXBUFLEN = 512;
 
 map<string, int> user_info;
