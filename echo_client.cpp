@@ -152,19 +152,10 @@ int main(int argc, char **argv)
                     cout << "----------------2" << endl;
                     string command2;
 
-                    FD_ZERO(&orig_set1);
-                    FD_SET(STDIN_FILENO, &orig_set1);
-                    FD_SET(sockfd, &orig_set1);
-                    if (sockfd > STDIN_FILENO) maxf1 = sockfd+1;
-                    else maxf1 = STDIN_FILENO + 1;
                     while (1)
                     {
                         cout << "----------------3" << endl;
-                        rset1 = orig_set1;
-                        cout << "----------------10" << endl;
-                        select(maxf1, &rset1, NULL, NULL, NULL);
-                        cout << "----------------4" << endl;
-                        if (FD_ISSET(sockfd, &rset1))
+                        if (FD_ISSET(sockfd, &rset))
                         {
                             if (read(sockfd, buf1, MAXBUFLEN) == 0)
                             {
@@ -174,7 +165,7 @@ int main(int argc, char **argv)
                             }
                             printf("Server response : %s\n", buf);
                         }
-                        else if (FD_ISSET(STDIN_FILENO, &rset1))
+                        else if (FD_ISSET(STDIN_FILENO, &rset))
                         {
                             cout << "----------------5" << endl;
                             if (fgets(buffer1, MAXBUFLEN, stdin) == NULL)
