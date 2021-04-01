@@ -124,7 +124,6 @@ int main(int argc, char **argv)
                 cmd1 = cmd.erase(pos1, len);
                 cmd2 = command.erase(0, pos1+1);
 
-                cout<<"---------"<<endl<<oneline<<endl;
                 if(cmd1 == "login")
                 {
                     write(sockfd, oneline.c_str(), oneline.length());
@@ -154,11 +153,11 @@ int main(int argc, char **argv)
                     else maxf1 = STDIN_FILENO + 1;
                     while (1)
                     {
-                        rset1 = orig_set;
+                        rset1 = orig_set1;
                         select(maxf1, &rset1, NULL, NULL, NULL);
                         if (FD_ISSET(sockfd, &rset1))
                         {
-                            if (read(sockfd, buff1, MAXBUFLEN) == 0)
+                            if (read(sockfd, buf1, MAXBUFLEN) == 0)
                             {
                                 printf("Server crashed.\n");
                                 exit(0);

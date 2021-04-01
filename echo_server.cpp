@@ -93,7 +93,6 @@ int main()
             int n = command.length();
             cmd2 = command.erase(0, pos1+1);
             cmd1 = cmd.erase(pos1, n);
-            cout<<"---------"<<endl<<command<<endl;
             if(cmd1 == "login")
             {
                 user_info.insert(pair<string, int>(cmd2, cli_sockfd));
@@ -112,7 +111,6 @@ int main()
             }
             else if(cmd1 == "logout")
             {
-                cout<<"=========="<<cmd2<<endl;
                 user_info.erase(user_info.find(cmd2));
                 map<string, int>::iterator user_it = user_info.begin();
                 cout << "Logged In User:"<<endl;
