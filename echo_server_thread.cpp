@@ -80,7 +80,7 @@ void *process_connection(void *arg)
 
             string reply;
             reply = "Welcome " + cmd2 + ", you have successfully logged in";
-            write(cli_sockfd, reply.c_str(), reply.length());
+            write(sockfd, reply.c_str(), reply.length());
         }
         memset(buf, 0, sizeof buf);
     }
