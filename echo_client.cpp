@@ -93,7 +93,8 @@ int main(int argc, char **argv)
         {
             if (read(sockfd, buf, MAXBUFLEN) == 0)
             {
-                printf("server crashed.\n");
+                printf("Server crashed.\n");
+                close(sockfd);
                 exit(0);
             }
             printf("Server response : %s\n", buf);
@@ -101,7 +102,11 @@ int main(int argc, char **argv)
 
         if (FD_ISSET(STDIN_FILENO, &rset))
         {
-            if (fgets(buffer, MAXBUFLEN, stdin) == NULL) exit(0);
+            if (fgets(buffer1, MAXBUFLEN, stdin) == NULL)
+                {
+                    close(sockfd);
+                    exit(0);
+                }
 
             string oneline(buffer);
             if (oneline == "exit")
@@ -126,13 +131,14 @@ int main(int argc, char **argv)
 
                 if(cmd1 == "login")
                 {
+                    cout << "----------------1" << endl;
                     write(sockfd, oneline.c_str(), oneline.length());
                     n = read(sockfd, buf, MAXBUFLEN);
                     if (n <= 0)
                     {
                         if (n == 0)
                         {
-                            cout << "server closed" << endl;
+                            cout << "Server closed" << endl;
                         } else
                         {
                             cout << "something wrong" << endl;
@@ -143,7 +149,7 @@ int main(int argc, char **argv)
 
                     buf[n] = '\0';
                     cout << buf << endl;
-
+                    cout << "----------------2" << endl;
                     string command2;
 
                     FD_ZERO(&orig_set1);
@@ -153,20 +159,28 @@ int main(int argc, char **argv)
                     else maxf1 = STDIN_FILENO + 1;
                     while (1)
                     {
+                        cout << "----------------3" << endl;
                         rset1 = orig_set1;
                         select(maxf1, &rset1, NULL, NULL, NULL);
+                        cout << "----------------4" << endl;
                         if (FD_ISSET(sockfd, &rset1))
                         {
                             if (read(sockfd, buf1, MAXBUFLEN) == 0)
                             {
                                 printf("Server crashed.\n");
+                                close(sockfd);
                                 exit(0);
                             }
                             printf("Server response : %s\n", buf);
                         }
-                        if (FD_ISSET(STDIN_FILENO, &rset1))
+                        else if (FD_ISSET(STDIN_FILENO, &rset1))
                         {
-                            if (fgets(buffer1, MAXBUFLEN, stdin) == NULL) exit(0);
+                            cout << "----------------5" << endl;
+                            if (fgets(buffer1, MAXBUFLEN, stdin) == NULL)
+                            {
+                                close(sockfd);
+                                exit(0);
+                            }
                             string command2(buffer1);
                             string cmd_nxt;
                             cmd_nxt = command2;
@@ -176,6 +190,7 @@ int main(int argc, char **argv)
                             int pos_next = cmd_nxt.find(" ");
                             int len2 = cmd_nxt.length();
                             cmd1_nxt = cmd_nxt.erase(pos_next, len2);
+                            cout << "----------------6" << endl;
 
                             if(cmd1_nxt == "logout")
                             {
@@ -186,7 +201,7 @@ int main(int argc, char **argv)
                                 {
                                     if (m == 0)
                                     {
-                                        cout << "server closedd" << endl;
+                                        cout << "server closed" << endl;
                                     } else
                                     {
                                         cout << "something wrong" << endl;
