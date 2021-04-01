@@ -52,7 +52,7 @@ void *process_connection(void *arg)
         cmd1 = cmd.erase(pos1, n);
         if(cmd1 == "login")
         {
-            user_info.insert(pair<string, int>(cmd2, cli_sockfd));
+            user_info.insert(pair<string, int>(cmd2, sockfd));
             cout << "Logged In User:"<<endl;
             map<string, int>::iterator user_it = user_info.begin();
             while(user_it != user_info.end())
@@ -64,7 +64,7 @@ void *process_connection(void *arg)
 
             string reply;
             reply = "Welcome " + cmd2 + ", you have successfully logged in";
-            write(cli_sockfd, reply.c_str(), reply.length());
+            write(sockfd, reply.c_str(), reply.length());
         }
         else if(cmd1 == "logout")
         {
