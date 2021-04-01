@@ -157,8 +157,15 @@ int main(int argc, char **argv)
                     cout << "----------------2" << endl;
                     string command2;
 
+                    FD_ZERO(&orig_set);
+                    FD_SET(STDIN_FILENO, &orig_set);
+                    FD_SET(sockfd, &orig_set);
+                    if (sockfd > STDIN_FILENO) maxf = sockfd+1;
+                    else maxf = STDIN_FILENO+ 1;
                     while (1)
                     {
+                        rset = orig_set;
+                        select(maxf, &rset, NULL, NULL, NULL);
                         cout << "----------------3" << endl;
                         if (FD_ISSET(sockfd, &rset))
                         {
