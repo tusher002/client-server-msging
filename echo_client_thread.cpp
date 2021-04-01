@@ -46,7 +46,6 @@ void *process_connection(void *arg)
             exit(1);
         }
         buf[n] = '\0';
-        cout<<"-----------------------------ashche-----------------"<<endl;
         cout << buf << endl;
     }
 }
@@ -183,20 +182,17 @@ int main(int argc, char **argv)
                     cout << buf << endl;
                     string command2;
 
-                    cout<<"--------------------1"<<endl;
-
                     FD_ZERO(&orig_set);
                     FD_SET(STDIN_FILENO, &orig_set);
                     FD_SET(sockfd, &orig_set);
                     if (sockfd > STDIN_FILENO) maxf = sockfd+1;
                     else maxf = STDIN_FILENO+ 1;
-                    cout<<"--------------------2"<<endl;
+
                     while (1)
                     {
-                        cout<<"--------------------3"<<endl;
                         rset = orig_set;
                         select(maxf, &rset, NULL, NULL, NULL);
-                        cout<<"--------------------4"<<endl;
+
                         if (FD_ISSET(sockfd, &rset))
                         {
                             if (read(sockfd, buf1, MAXBUFLEN) == 0)
@@ -209,7 +205,6 @@ int main(int argc, char **argv)
                         }
                         else if (FD_ISSET(STDIN_FILENO, &rset))
                         {
-                            cout<<"--------------------5"<<endl;
                             if (fgets(buffer1, MAXBUFLEN, stdin) == NULL)
                             {
                                 close(sockfd);
@@ -225,9 +220,6 @@ int main(int argc, char **argv)
                             int pos_next = cmd_nxt.find(" ");
                             int len2 = cmd_nxt.length();
                             cmd1_nxt = cmd_nxt.erase(pos_next, len2);
-                            cout<<"--------------------6"<<endl;
-                            cout<<cmd1_nxt<<endl;
-                            cout<<"--------------------7"<<endl;
 
                             if(cmd1_nxt == "logout")
                             {
