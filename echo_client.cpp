@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 
         if (FD_ISSET(STDIN_FILENO, &rset))
         {
-            if (fgets(buffer1, MAXBUFLEN, stdin) == NULL)
+            if (fgets(buffer, MAXBUFLEN, stdin) == NULL)
                 {
                     close(sockfd);
                     exit(0);
@@ -161,6 +161,7 @@ int main(int argc, char **argv)
                     {
                         cout << "----------------3" << endl;
                         rset1 = orig_set1;
+                        cout << "----------------10" << endl;
                         select(maxf1, &rset1, NULL, NULL, NULL);
                         cout << "----------------4" << endl;
                         if (FD_ISSET(sockfd, &rset1))
