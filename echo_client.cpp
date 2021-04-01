@@ -87,10 +87,13 @@ int main(int argc, char **argv)
 
 	while (1)
     {
+        cout << "----------------10" << endl;
         rset = orig_set;
         select(maxf, &rset, NULL, NULL, NULL);
+        cout << "----------------11" << endl;
         if (FD_ISSET(sockfd, &rset))
         {
+            cout << "----------------12" << endl;
             if (read(sockfd, buf, MAXBUFLEN) == 0)
             {
                 printf("Server crashed.\n");
@@ -99,9 +102,11 @@ int main(int argc, char **argv)
             }
             printf("Server response : %s\n", buf);
         }
+        cout << "----------------13" << endl;
 
         if (FD_ISSET(STDIN_FILENO, &rset))
         {
+            cout << "----------------14" << endl;
             if (fgets(buffer, MAXBUFLEN, stdin) == NULL)
                 {
                     close(sockfd);
