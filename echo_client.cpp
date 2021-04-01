@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
 
 	FD_ZERO(&orig_set);
-    (STDIN_FILENO, &orig_set);
+    FD_SET(STDIN_FILENO, &orig_set);
     FD_SET(sockfd, &orig_set);
     if (sockfd > STDIN_FILENO) maxf = sockfd+1;
     else maxf = STDIN_FILENO+ 1;
@@ -121,6 +121,7 @@ int main(int argc, char **argv)
                 cmd1 = cmd.erase(pos1, len);
                 cmd2 = command.erase(0, pos1+1);
 
+                cout<<"---------"<<endl<<oneline<<endl;
                 if(cmd1 == "login")
                 {
                     write(sockfd, oneline.c_str(), oneline.length());
@@ -155,7 +156,6 @@ int main(int argc, char **argv)
 
                         if(cmd1_nxt == "logout")
                         {
-                            cout<<"---------"<<endl<<cmd2<<endl;
                             command2 = command2 + " " + cmd2;
                             write(sockfd, command2.c_str(), command2.length());
                             m = read(sockfd, output, MAXBUFLEN);
