@@ -184,12 +184,12 @@ int main(int argc, char **argv)
                     buf[n] = '\0';
                     cout << buf << endl;
                 }
-                else if(cmd1 == "logout" && logged = 1)
+                else if(cmd1 == "logout" && logged == 1)
                 {
                     write(sockfd, oneline.c_str(), oneline.length());
                     logged = 0;
                 }
-                else if(cmd1 == "chat" && logged = 1)
+                else if(cmd1 == "chat" && logged == 1)
                 {
                     write(sockfd, oneline.c_str(), oneline.length());
                 }
