@@ -115,9 +115,6 @@ void *process_connection(void *arg)
                 }
                 else
                 {
-                    string reply;
-                    reply = "Message delivered";
-                    write(sockfd, reply.c_str(), reply.length());
                     write(it->second, msg.c_str(), msg.length());
                 }
             }
@@ -139,12 +136,6 @@ void *process_connection(void *arg)
                     if(user_it->second != sockfd)
                     {
                         write(user_it->second, cmd2.c_str(), cmd2.length());
-                    }
-                    else
-                    {
-                        string reply;
-                        reply = "Message delivered";
-                        write(user_it->second, reply.c_str(), reply.length());
                     }
                     user_it++;
                 }
