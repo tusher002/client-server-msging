@@ -35,7 +35,7 @@ void *process_connection(void *arg)
         {
             if (n == 0)
             {
-                cout << "server closedd" << endl;
+                cout << "server closed" << endl;
             }
             else
             {
@@ -54,6 +54,7 @@ void *process_connection(void *arg)
 
 int main(int argc, char **argv)
 {
+    bool logged = 0;
     char buf[MAXBUFLEN];
 	char buf1[MAXBUFLEN];
 	char buffer[MAXBUFLEN];
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    //pthread_create(&tid, NULL, &process_connection, NULL);
+    pthread_create(&tid, NULL, &process_connection, NULL);
 
     FD_ZERO(&orig_set);
     FD_SET(STDIN_FILENO, &orig_set);
@@ -178,100 +179,19 @@ int main(int argc, char **argv)
                         close(sockfd);
                         exit(0);
                     }
+                    logged = 1;
 
                     buf[n] = '\0';
                     cout << buf << endl;
-                    string command2;
-
-                    FD_ZERO(&orig_set);
-                    FD_SET(STDIN_FILENO, &orig_set);
-                    FD_SET(sockfd, &orig_set);
-                    if (sockfd > STDIN_FILENO) maxf = sockfd+1;
-                    else maxf = STDIN_FILENO+ 1;
-
-                    while (1)
-                    {
-                        rset = orig_set;
-                        select(maxf, &rset, NULL, NULL, NULL);
-                        memset(buf1, 0, sizeof buf1);
-
-                        if (FD_ISSET(sockfd, &rset))
-                        {
-                            if (read(sockfd, buf1, MAXBUFLEN) == 0)
-                            {
-                                //printf("Server crashed.\n");
-                                close(sockfd);
-                                exit(0);
-                            }
-                            cout<<buf1<<endl;
-                        }
-                        else if (FD_ISSET(STDIN_FILENO, &rset))
-                        {
-                            if (fgets(buffer1, MAXBUFLEN, stdin) == NULL)
-                            {
-                                close(sockfd);
-                                exit(0);
-                            }
-                            string command2(buffer1);
-                            command2.pop_back();
-                            string cmd_nxt;
-                            cmd_nxt = command2;
-                            cmd_nxt = cmd_nxt + " ";
-                            string cmd1_nxt;
-                            cmd1_nxt = "";
-                            int pos_next = cmd_nxt.find(" ");
-                            int len2 = cmd_nxt.length();
-                            cmd1_nxt = cmd_nxt.erase(pos_next, len2);
-
-                            if(cmd1_nxt == "logout")
-                            {
-                                command2 = command2 + " " + cmd2;
-                                write(sockfd, command2.c_str(), command2.length());
-                                m = read(sockfd, output, MAXBUFLEN);
-                                if (m <= 0)
-                                {
-                                    if (m == 0)
-                                    {
-                                        cout << "server closed" << endl;
-                                    } else
-                                    {
-                                        cout << "something wrong" << endl;
-                                    }
-                                    close(sockfd);
-                                    exit(0);
-                                }
-
-                                output[m] = '\0';
-                                cout << output << endl;
-                                break;
-                            }
-
-                            else if(cmd1_nxt == "chat")
-                            {
-                                write(sockfd, command2.c_str(), command2.length());
-                                m = read(sockfd, output, MAXBUFLEN);
-                                if (m <= 0)
-                                {
-                                    if (m == 0)
-                                    {
-                                        cout << "server closed" << endl;
-                                    } else
-                                    {
-                                        cout << "something wrong" << endl;
-                                    }
-                                    close(sockfd);
-                                    exit(0);
-                                }
-
-                                output[m] = '\0';
-                                cout << output << endl;
-                            }
-                            else
-                            {
-                                cout<<"doing well-----------"<<endl;
-                            }
-                        }
-                    }
+                }
+                else if(cmd1 == "logout" && logged = 1)
+                {
+                    write(sockfd, oneline.c_str(), oneline.length());
+                    logged = 0;
+                }
+                else if(cmd1 == "chat" && logged = 1)
+                {
+                    write(sockfd, oneline.c_str(), oneline.length());
                 }
                 else
                 {

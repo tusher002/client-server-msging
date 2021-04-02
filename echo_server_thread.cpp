@@ -68,8 +68,19 @@ void *process_connection(void *arg)
         }
         else if(cmd1 == "logout")
         {
-            user_info.erase(user_info.find(cmd2));
+            string user;
             map<string, int>::iterator user_it = user_info.begin();
+            while(user_it != user_info.end())
+            {
+                if(user_it->second == sockfd)
+                {
+                    user = user_it->first;
+                    break;
+                }
+                user_it++;
+            }
+            user_info.erase(user_info.find(user));
+            user_it = user_info.begin();
             cout << "Logged In User:"<<endl;
             while(user_it != user_info.end())
             {
@@ -136,12 +147,6 @@ void *process_connection(void *arg)
                     if(user_it->second != sockfd)
                     {
                         write(user_it->second, cmd2.c_str(), cmd2.length());
-                    }
-                    else
-                    {
-                        string reply;
-                        reply = "Broadcasted";
-                        write(user_it->second, reply.c_str(), reply.length());
                     }
                     user_it++;
                 }
