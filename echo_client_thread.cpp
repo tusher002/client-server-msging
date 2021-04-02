@@ -243,6 +243,27 @@ int main(int argc, char **argv)
                                 cout << output << endl;
                                 break;
                             }
+
+                            else if(cmd1_nxt == "chat")
+                            {
+                                write(sockfd, command2.c_str(), command2.length());
+                                m = read(sockfd, output, MAXBUFLEN);
+                                if (m <= 0)
+                                {
+                                    if (m == 0)
+                                    {
+                                        cout << "server closed" << endl;
+                                    } else
+                                    {
+                                        cout << "something wrong" << endl;
+                                    }
+                                    close(sockfd);
+                                    exit(0);
+                                }
+
+                                output[m] = '\0';
+                                cout << output << endl;
+                            }
                             else
                             {
                                 cout<<"doing well-----------"<<endl;
