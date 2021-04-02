@@ -25,11 +25,13 @@ int sockfd;
 
 void *process_connection(void *arg)
 {
+    cout<<"-----------------------10"<<endl;
     int n;
     char buf[MAXBUFLEN];
     pthread_detach(pthread_self());
     while (1)
     {
+        cout<<"-----------------------11"<<endl;
         n = read(sockfd, buf, MAXBUFLEN);
         if (n <= 0)
         {
@@ -45,8 +47,11 @@ void *process_connection(void *arg)
             // we directly exit the whole process.
             exit(1);
         }
+        cout<<"-----------------------12"<<endl;
         buf[n] = '\0';
         cout << buf << endl;
+        memset(buf, 0, sizeof buf);
+        cout<<"-----------------------13"<<endl;
     }
 }
 
@@ -111,95 +116,54 @@ int main(int argc, char **argv)
 
     pthread_create(&tid, NULL, &process_connection, NULL);
 
-    FD_ZERO(&orig_set);
-    FD_SET(STDIN_FILENO, &orig_set);
-    FD_SET(sockfd, &orig_set);
-    if (sockfd > STDIN_FILENO) maxf = sockfd+1;
-    else maxf = STDIN_FILENO+ 1;
-
-    while (1)
+    string oneline;
+    while (getline(cin, oneline))
     {
-        memset(buf, 0, sizeof buf);
-        rset = orig_set;
-        select(maxf, &rset, NULL, NULL, NULL);
-        if (FD_ISSET(sockfd, &rset))
+        cout<<"-----------------------1"<<endl;
+        if (oneline == "exit")
         {
-            if (read(sockfd, buf, MAXBUFLEN) == 0)
-            {
-                //printf("Server crashed.\n");
-                close(sockfd);
-                exit(0);
-            }
-            printf("Server response : %s\n", buf);
+            close(sockfd);
+            return 0;
         }
-
-        if (FD_ISSET(STDIN_FILENO, &rset))
+        else
         {
-            if (fgets(buffer, MAXBUFLEN, stdin) == NULL)
-                {
-                    close(sockfd);
-                    exit(0);
-                }
+            cout<<"-----------------------2"<<endl;
+            string command;
+            command = oneline;
+            command = command + " ";
+            string cmd1, cmd, cmd2;
+            cmd = command;
+            cmd1 = "";
+            cmd2 = "";
+            int pos1 = command.find(" ");
+            command.pop_back();
+            int len = command.length();
+            cmd1 = cmd.erase(pos1, len);
+            cmd2 = command.erase(0, pos1+1);
 
-            string oneline(buffer);
-            oneline.pop_back();
-            if (oneline == "exit")
+            if(cmd1 == "login")
             {
-                close(sockfd);
-                return 0;
+                cout<<"-----------------------3"<<endl;
+                write(sockfd, oneline.c_str(), oneline.length());
+                logged = 1;
             }
+            cout<<"-----------------------4"<<endl;
+            else if(cmd1 == "logout" && logged == 1)
+            {
+                write(sockfd, oneline.c_str(), oneline.length());
+                logged = 0;
+            }
+            else if(cmd1 == "chat" && logged == 1)
+            {
+                cout<<"-----------------------5"<<endl;
+                write(sockfd, oneline.c_str(), oneline.length());
+            }
+            cout<<"-----------------------6"<<endl;
             else
             {
-                string command;
-                command = oneline;
-                command = command + " ";
-                string cmd1, cmd, cmd2;
-                cmd = command;
-                cmd1 = "";
-                cmd2 = "";
-                int pos1 = command.find(" ");
-                command.pop_back();
-                int len = command.length();
-                cmd1 = cmd.erase(pos1, len);
-                cmd2 = command.erase(0, pos1+1);
-
-                if(cmd1 == "login")
-                {
-                    write(sockfd, oneline.c_str(), oneline.length());
-                    n = read(sockfd, buf, MAXBUFLEN);
-                    if (n <= 0)
-                    {
-                        if (n == 0)
-                        {
-                            cout << "Server closed" << endl;
-                        } else
-                        {
-                            cout << "something wrong" << endl;
-                        }
-                        close(sockfd);
-                        exit(0);
-                    }
-                    logged = 1;
-
-                    buf[n] = '\0';
-                    cout << buf << endl;
-                }
-                else if(cmd1 == "logout" && logged == 1)
-                {
-                    write(sockfd, oneline.c_str(), oneline.length());
-                    logged = 0;
-                }
-                else if(cmd1 == "chat" && logged == 1)
-                {
-                    write(sockfd, oneline.c_str(), oneline.length());
-                }
-                else
-                {
-                    cout<<"You need to log in first"<<endl;
-                }
+                cout<<"You need to log in first"<<endl;
             }
         }
-
     }
     exit(0);
 }
