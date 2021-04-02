@@ -118,6 +118,7 @@ int main(int argc, char **argv)
 
     while (1)
     {
+        memset(buf, 0, sizeof buf);
         rset = orig_set;
         select(maxf, &rset, NULL, NULL, NULL);
         if (FD_ISSET(sockfd, &rset))
@@ -192,6 +193,7 @@ int main(int argc, char **argv)
                     {
                         rset = orig_set;
                         select(maxf, &rset, NULL, NULL, NULL);
+                        memset(buf1, 0, sizeof buf1);
 
                         if (FD_ISSET(sockfd, &rset))
                         {
@@ -201,7 +203,7 @@ int main(int argc, char **argv)
                                 close(sockfd);
                                 exit(0);
                             }
-                            printf("Server response : %s\n", buf);
+                            cout<<buf1<<endl;
                         }
                         else if (FD_ISSET(STDIN_FILENO, &rset))
                         {
@@ -247,7 +249,6 @@ int main(int argc, char **argv)
                             else if(cmd1_nxt == "chat")
                             {
                                 write(sockfd, command2.c_str(), command2.length());
-                                sleep(2);
                                 m = read(sockfd, output, MAXBUFLEN);
                                 if (m <= 0)
                                 {
