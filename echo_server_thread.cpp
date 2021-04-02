@@ -82,7 +82,7 @@ void *process_connection(void *arg)
             reply = "You have successfully logged out";
             write(sockfd, reply.c_str(), reply.length());
         }
-        else if(cmd1 ="chat")
+        else if(cmd1 == "chat")
         {
             cmd2 = cmd2 + " ";
             if(cmd2[0] == '@')
@@ -113,7 +113,7 @@ void *process_connection(void *arg)
                     reply = "The person you have tried to send the message is unavailable right now";
                     write(sockfd, reply.c_str(), reply.length());
                 }
-                else write(user_it->second, msg.c_str(), msg.length());
+                else write(it->second, msg.c_str(), msg.length());
             }
             else
             {
@@ -127,6 +127,7 @@ void *process_connection(void *arg)
                     }
                     user_it++;
                 }
+                user_it = user_info.begin();
                 while(user_it != user_info.end())
                 {
                     if(user_it->second != sockfd)
