@@ -87,13 +87,10 @@ int main(int argc, char **argv)
 
 	while (1)
     {
-        cout << "----------------10" << endl;
         rset = orig_set;
         select(maxf, &rset, NULL, NULL, NULL);
-        cout << "----------------11" << endl;
         if (FD_ISSET(sockfd, &rset))
         {
-            cout << "----------------12" << endl;
             if (read(sockfd, buf, MAXBUFLEN) == 0)
             {
                 printf("Server crashed.\n");
@@ -102,11 +99,9 @@ int main(int argc, char **argv)
             }
             printf("Server response : %s\n", buf);
         }
-        cout << "----------------13" << endl;
 
         if (FD_ISSET(STDIN_FILENO, &rset))
         {
-            cout << "----------------14" << endl;
             if (fgets(buffer, MAXBUFLEN, stdin) == NULL)
                 {
                     close(sockfd);
@@ -136,7 +131,6 @@ int main(int argc, char **argv)
 
                 if(cmd1 == "login")
                 {
-                    cout << "----------------1" << endl;
                     write(sockfd, oneline.c_str(), oneline.length());
                     n = read(sockfd, buf, MAXBUFLEN);
                     if (n <= 0)
@@ -154,7 +148,6 @@ int main(int argc, char **argv)
 
                     buf[n] = '\0';
                     cout << buf << endl;
-                    cout << "----------------2" << endl;
                     string command2;
 
                     FD_ZERO(&orig_set);
@@ -166,7 +159,6 @@ int main(int argc, char **argv)
                     {
                         rset = orig_set;
                         select(maxf, &rset, NULL, NULL, NULL);
-                        cout << "----------------3" << endl;
                         if (FD_ISSET(sockfd, &rset))
                         {
                             if (read(sockfd, buf1, MAXBUFLEN) == 0)
@@ -179,7 +171,6 @@ int main(int argc, char **argv)
                         }
                         else if (FD_ISSET(STDIN_FILENO, &rset))
                         {
-                            cout << "----------------5" << endl;
                             if (fgets(buffer1, MAXBUFLEN, stdin) == NULL)
                             {
                                 close(sockfd);
@@ -194,7 +185,6 @@ int main(int argc, char **argv)
                             int pos_next = cmd_nxt.find(" ");
                             int len2 = cmd_nxt.length();
                             cmd1_nxt = cmd_nxt.erase(pos_next, len2);
-                            cout << "----------------6" << endl;
 
                             if(cmd1_nxt == "logout")
                             {

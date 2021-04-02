@@ -82,6 +82,59 @@ void *process_connection(void *arg)
             reply = "You have successfully logged out";
             write(sockfd, reply.c_str(), reply.length());
         }
+        else if(cmd1 ="chat")
+        {
+            cmd2 = cmd2 + " ";
+            if(cmd2[0] == "@")
+            {
+                string msg;
+                int m_pos;
+                msg = cmd2;
+                m_pos = command.find(" ");
+                int m_len = cmd2.length();
+                msg = msg.erase(0, m_pos+1);
+                map<string, int>::iterator user_it = user_info.begin();
+                while(user_it != user_info.end())
+                {
+                    if(user_it->second == sockfd)
+                    {
+                        msg = user_it->first + " >> " + msg;
+                        break;
+                    }
+                    user_it++;
+                }
+                cmd2 = cmd2.erase(m_pos, m_len);
+                string user = cmd2.erase(0, 1);
+                map<string, int>::iterator it ;
+                it = user_info.find(user);
+                write(user_it->second, msg.c_str(), msg.length());
+            }
+            else
+            {
+                map<string, int>::iterator user_it = user_info.begin();
+                while(user_it != user_info.end())
+                {
+                    if(user_it->second == sockfd)
+                    {
+                        cmd2 = user_it->first + " >> " + cmd2;
+                        break;
+                    }
+                    user_it++;
+                }
+                while(user_it != user_info.end())
+                {
+                    if(user_it->second != sockfd)
+                    {
+                        write(user_it->second, cmd2.c_str(), cmd2.length());
+                    }
+                    user_it++;
+                }
+            }
+
+            string reply;
+            reply = "You have successfully logged out";
+
+        }
         memset(buf, 0, sizeof buf);
     }
     if (n == 0)
