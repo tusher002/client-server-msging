@@ -247,6 +247,7 @@ int main(int argc, char **argv)
                             else if(cmd1_nxt == "chat")
                             {
                                 write(sockfd, command2.c_str(), command2.length());
+                                sleep(2);
                                 m = read(sockfd, output, MAXBUFLEN);
                                 if (m <= 0)
                                 {

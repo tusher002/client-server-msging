@@ -113,7 +113,13 @@ void *process_connection(void *arg)
                     reply = "The person you have tried to send the message is unavailable right now";
                     write(sockfd, reply.c_str(), reply.length());
                 }
-                else write(it->second, msg.c_str(), msg.length());
+                else
+                {
+                    string reply;
+                    reply = "Message delivered";
+                    write(sockfd, reply.c_str(), reply.length());
+                    write(it->second, msg.c_str(), msg.length());
+                }
             }
             else
             {
@@ -133,6 +139,12 @@ void *process_connection(void *arg)
                     if(user_it->second != sockfd)
                     {
                         write(user_it->second, cmd2.c_str(), cmd2.length());
+                    }
+                    else
+                    {
+                        string reply;
+                        reply = "Message delivered";
+                        write(user_it->second, reply.c_str(), reply.length());
                     }
                     user_it++;
                 }
