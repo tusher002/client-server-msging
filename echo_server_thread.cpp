@@ -85,7 +85,7 @@ void *process_connection(void *arg)
         else if(cmd1 ="chat")
         {
             cmd2 = cmd2 + " ";
-            if(cmd2[0] == "@")
+            if(cmd2[0] == '@')
             {
                 string msg;
                 int m_pos;
@@ -107,7 +107,13 @@ void *process_connection(void *arg)
                 string user = cmd2.erase(0, 1);
                 map<string, int>::iterator it ;
                 it = user_info.find(user);
-                write(user_it->second, msg.c_str(), msg.length());
+                if(it == user_info.end())
+                {
+                    string reply;
+                    reply = "The person you have tried to send the message is unavailable right now";
+                    write(sockfd, reply.c_str(), reply.length());
+                }
+                else write(user_it->second, msg.c_str(), msg.length());
             }
             else
             {
