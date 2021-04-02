@@ -147,9 +147,9 @@ int main(int argc, char **argv)
                 write(sockfd, oneline.c_str(), oneline.length());
                 logged = 1;
             }
-            cout<<"-----------------------4"<<endl;
             else if(cmd1 == "logout" && logged == 1)
             {
+                cout<<"-----------------------6"<<endl;
                 write(sockfd, oneline.c_str(), oneline.length());
                 logged = 0;
             }
@@ -158,11 +158,11 @@ int main(int argc, char **argv)
                 cout<<"-----------------------5"<<endl;
                 write(sockfd, oneline.c_str(), oneline.length());
             }
-            cout<<"-----------------------6"<<endl;
             else
             {
                 cout<<"You need to log in first"<<endl;
             }
+            cout<<"-----------------------4"<<endl;
         }
     }
     exit(0);
