@@ -137,12 +137,15 @@ void *process_connection(void *arg)
                     {
                         write(user_it->second, cmd2.c_str(), cmd2.length());
                     }
+                    else
+                    {
+                        string reply;
+                        reply = "Broadcasted";
+                        write(user_it->second, reply.c_str(), reply.length());
+                    }
                     user_it++;
                 }
             }
-
-            string reply;
-            reply = "You have successfully logged out";
 
         }
         memset(buf, 0, sizeof buf);
