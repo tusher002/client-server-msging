@@ -55,8 +55,8 @@ int main()
         my_file.close();
     }
 	int opt = 1;
-	int master_socket , addrlen , new_socket , client_socket[30] ,
-		max_clients = 30 , activity, i , valread , sockfd;
+	int master_socket , addrlen , new_socket , client_socket[300] ,
+		max_clients = 300 , activity, i , valread , sockfd;
 	int max_sd;
 	struct sockaddr_in address;
 
@@ -99,7 +99,7 @@ int main()
 		perror("bind failed");
 		exit(EXIT_FAILURE);
 	}
-	printf("Listener on port %d \n", port);
+	cout<<"Server on port "<<port<<endl;
 
 	//try to specify maximum of 3 pending connections for the master socket
 	if (listen(master_socket, 3) < 0)
@@ -157,8 +157,8 @@ int main()
 			}
 
 			//inform user of socket number - used in send and receive commands
-			printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs
-				(address.sin_port));
+			cout << "remote client IP == " << inet_ntoa(address.sin_addr);
+            cout << ", port == " << ntohs(address.sin_port) << endl;
 
 
 			//add new socket to array of sockets
@@ -168,8 +168,6 @@ int main()
 				if( client_socket[i] == 0 )
 				{
 					client_socket[i] = new_socket;
-					printf("Adding to list of sockets as %d\n" , i);
-
 					break;
 				}
 			}
@@ -189,8 +187,8 @@ int main()
 					//Somebody disconnected , get his details and print
 					getpeername(sockfd , (struct sockaddr*)&address , \
 						(socklen_t*)&addrlen);
-					printf("Host disconnected , ip %s , port %d \n" ,
-						inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+					cout << "Client disconnected: IP == " << inet_ntoa(address.sin_addr);
+                    cout << ", port == " << ntohs(address.sin_port) << endl;
 
 					//Close the socket and mark as 0 in list for reuse
 					close( sockfd );
