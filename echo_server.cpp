@@ -1,22 +1,30 @@
-//Example code: A simple server side code, which echos back the received message.
-//Handle multiple socket connections with select and fd_set on Linux
-#include <stdio.h>
-#include <string.h> //strlen
-#include <stdlib.h>
-#include <errno.h>
-#include <unistd.h> //close
-#include <arpa/inet.h> //close
+#include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <strings.h>
+#include <unistd.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <netdb.h>
+#include <string>
+#include <map>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+#include <bits/stdc++.h>
 
-#define TRUE 1
-#define FALSE 0
 int port;
 
 int main(int argc , char *argv[])
 {
+    bool TRUE = 1;
     fstream my_file;
     my_file.open("configuration_file.txt", ios::in);
     if (!my_file)
@@ -53,8 +61,6 @@ int main(int argc , char *argv[])
 	//set of socket descriptors
 	fd_set readfds;
 
-	//a message
-	char *message = "ECHO Daemon v1.0 \r\n";
 
 	//initialise all client_socket[] to 0 so not checked
 	for (i = 0; i < max_clients; i++)
@@ -147,17 +153,9 @@ int main(int argc , char *argv[])
 			}
 
 			//inform user of socket number - used in send and receive commands
-			printf("New connection , socket fd is %d , ip is : %s , port : %d
-				\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs
+			printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs
 				(address.sin_port));
 
-			//send new connection greeting message
-			if( send(new_socket, message, strlen(message), 0) != strlen(message) )
-			{
-				perror("send");
-			}
-
-			puts("Welcome message sent successfully");
 
 			//add new socket to array of sockets
 			for (i = 0; i < max_clients; i++)
