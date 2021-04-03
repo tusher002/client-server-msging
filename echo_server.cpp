@@ -60,7 +60,7 @@ int main()
 	int max_sd;
 	struct sockaddr_in address;
 
-	char buffer[MAXBUFLEN]; //data buffer of 1K
+	char buf[MAXBUFLEN]; //data buf of 1K
 
 	//set of socket descriptors
 	fd_set readfds;
@@ -182,7 +182,7 @@ int main()
 			{
 				//Check if it was for closing , and also read the
 				//incoming message
-				if ((valread = read( sockfd , buffer, MAXBUFLEN)) == 0)
+				if ((valread = read( sockfd , buf, MAXBUFLEN)) == 0)
 				{
 					//Somebody disconnected , get his details and print
 					getpeername(sockfd , (struct sockaddr*)&address , \
@@ -200,8 +200,122 @@ int main()
 				{
 					//set the string terminating NULL byte on the end
 					//of the data read
-					buffer[valread] = '\0';
-					send(sockfd , buffer , strlen(buffer) , 0 );
+					buf[valread] = '\0';
+					string command(buf);
+                    command = command + " ";
+                    string cmd1, cmd2, cmd;
+                    cmd = command;
+                    cmd1 = "";
+                    cmd2 = "";
+                    int pos1 = command.find(" ");
+                    command.pop_back();
+                    int n = command.length();
+                    cmd2 = command.erase(0, pos1+1);
+                    cmd1 = cmd.erase(pos1, n);
+                    if(cmd1 == "login")
+                    {
+                        user_info.insert(pair<string, int>(cmd2, sockfd));
+                        cout << "Logged In User:"<<endl;
+                        map<string, int>::iterator user_it = user_info.begin();
+                        while(user_it != user_info.end())
+                        {
+                            cout << '\t' << user_it->first<< '\t' << user_it->second << '\n';
+                            user_it++;
+                        }
+                        cout << endl;
+
+                        string reply;
+                        reply = "Welcome " + cmd2 + ", you have successfully logged in";
+                        send(sockfd, reply.c_str(), reply.length(), 0);
+                    }
+                    else if(cmd1 == "logout")
+                    {
+                        string user;
+                        map<string, int>::iterator user_it = user_info.begin();
+                        while(user_it != user_info.end())
+                        {
+                            if(user_it->second == sockfd)
+                            {
+                                user = user_it->first;
+                                break;
+                            }
+                            user_it++;
+                        }
+                        user_info.erase(user_info.find(user));
+                        user_it = user_info.begin();
+                        cout << "Logged In User:"<<endl;
+                        while(user_it != user_info.end())
+                        {
+                            cout << '\t' << user_it->first<< '\t' << user_it->second << '\n';
+                            user_it++;
+                        }
+                        cout << endl;
+
+                        string reply;
+                        reply = "You have successfully logged out";
+                        send(sockfd, reply.c_str(), reply.length(), 0);
+                    }
+                    else if(cmd1 == "chat")
+                    {
+                        cmd2 = cmd2 + " ";
+                        if(cmd2[0] == '@')
+                        {
+                            string msg;
+                            int m_pos;
+                            msg = cmd2;
+                            m_pos = command.find(" ");
+                            int m_len = cmd2.length();
+                            msg = msg.erase(0, m_pos+1);
+                            map<string, int>::iterator user_it = user_info.begin();
+                            while(user_it != user_info.end())
+                            {
+                                if(user_it->second == sockfd)
+                                {
+                                    msg = user_it->first + " >> " + msg;
+                                    break;
+                                }
+                                user_it++;
+                            }
+                            cmd2 = cmd2.erase(m_pos, m_len);
+                            string user = cmd2.erase(0, 1);
+                            map<string, int>::iterator it ;
+                            it = user_info.find(user);
+                            if(it == user_info.end())
+                            {
+                                string reply;
+                                reply = "The person you have tried to send the message is unavailable right now";
+                                send(sockfd, reply.c_str(), reply.length(), 0);
+                            }
+                            else
+                            {
+                                send(it->second, msg.c_str(), msg.length(), 0);
+                            }
+                        }
+                        else
+                        {
+                            map<string, int>::iterator user_it = user_info.begin();
+                            while(user_it != user_info.end())
+                            {
+                                if(user_it->second == sockfd)
+                                {
+                                    cmd2 = user_it->first + " >> " + cmd2;
+                                    break;
+                                }
+                                user_it++;
+                            }
+                            user_it = user_info.begin();
+                            while(user_it != user_info.end())
+                            {
+                                if(user_it->second != sockfd)
+                                {
+                                    send(user_it->second, cmd2.c_str(), cmd2.length(), 0);
+                                }
+                                user_it++;
+                            }
+                        }
+
+                    }
+                    memset(buf, 0, sizeof buf);
 				}
 			}
 		}
