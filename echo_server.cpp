@@ -20,11 +20,15 @@
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
 #include <bits/stdc++.h>
 
-int port;
 
-int main(int argc , char *argv[])
+using namespace std;
+
+map<string, int> user_info;
+int port;
+const unsigned MAXBUFLEN = 512;
+
+int main()
 {
-    bool TRUE = 1;
     fstream my_file;
     my_file.open("configuration_file.txt", ios::in);
     if (!my_file)
@@ -50,13 +54,13 @@ int main(int argc , char *argv[])
         }
         my_file.close();
     }
-	int opt = TRUE;
+	int opt = 1;
 	int master_socket , addrlen , new_socket , client_socket[30] ,
-		max_clients = 30 , activity, i , valread , sd;
+		max_clients = 30 , activity, i , valread , sockfd;
 	int max_sd;
 	struct sockaddr_in address;
 
-	char buffer[1025]; //data buffer of 1K
+	char buffer[MAXBUFLEN]; //data buffer of 1K
 
 	//set of socket descriptors
 	fd_set readfds;
@@ -108,7 +112,7 @@ int main(int argc , char *argv[])
 	addrlen = sizeof(address);
 	puts("Waiting for connections ...");
 
-	while(TRUE)
+	while(1)
 	{
 		//clear the socket set
 		FD_ZERO(&readfds);
@@ -121,15 +125,15 @@ int main(int argc , char *argv[])
 		for ( i = 0 ; i < max_clients ; i++)
 		{
 			//socket descriptor
-			sd = client_socket[i];
+			sockfd = client_socket[i];
 
 			//if valid socket descriptor then add to read list
-			if(sd > 0)
-				FD_SET( sd , &readfds);
+			if(sockfd > 0)
+				FD_SET( sockfd , &readfds);
 
 			//highest file descriptor number, need it for the select function
-			if(sd > max_sd)
-				max_sd = sd;
+			if(sockfd > max_sd)
+				max_sd = sockfd;
 		}
 
 		//wait for an activity on one of the sockets , timeout is NULL ,
@@ -174,22 +178,22 @@ int main(int argc , char *argv[])
 		//else its some IO operation on some other socket
 		for (i = 0; i < max_clients; i++)
 		{
-			sd = client_socket[i];
+			sockfd = client_socket[i];
 
-			if (FD_ISSET( sd , &readfds))
+			if (FD_ISSET( sockfd , &readfds))
 			{
 				//Check if it was for closing , and also read the
 				//incoming message
-				if ((valread = read( sd , buffer, 1024)) == 0)
+				if ((valread = read( sockfd , buffer, MAXBUFLEN)) == 0)
 				{
 					//Somebody disconnected , get his details and print
-					getpeername(sd , (struct sockaddr*)&address , \
+					getpeername(sockfd , (struct sockaddr*)&address , \
 						(socklen_t*)&addrlen);
 					printf("Host disconnected , ip %s , port %d \n" ,
 						inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
 
 					//Close the socket and mark as 0 in list for reuse
-					close( sd );
+					close( sockfd );
 					client_socket[i] = 0;
 				}
 
@@ -199,7 +203,7 @@ int main(int argc , char *argv[])
 					//set the string terminating NULL byte on the end
 					//of the data read
 					buffer[valread] = '\0';
-					send(sd , buffer , strlen(buffer) , 0 );
+					send(sockfd , buffer , strlen(buffer) , 0 );
 				}
 			}
 		}
