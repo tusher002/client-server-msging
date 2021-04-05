@@ -24,7 +24,7 @@
 using namespace std;
 
 map<string, int> user_info;
-int port;
+int port, client_socket[300];
 const unsigned MAXBUFLEN = 512;
 
 void signalHandler( int signum )
@@ -32,12 +32,13 @@ void signalHandler( int signum )
     map<string, int>::iterator user_it = user_info.begin();
     string reply;
     reply = "Server Crashed";
-    while(user_it != user_info.end())
+    for(int j; j<=300; j++)
     {
-        send(user_it->second, reply.c_str(), reply.length(), 0);
+        if(client_socket[j] != 0)
+        send(client_socket[j], reply.c_str(), reply.length(), 0);
         user_it++;
     }
-    sleep(2);
+    sleep(1);
     exit(0);
 }
 
@@ -69,8 +70,7 @@ int main()
         my_file.close();
     }
 	int opt = 1;
-	int master_socket , addrlen , new_socket , client_socket[300] ,
-		max_clients = 300 , activity, i , valread , sockfd;
+	int master_socket, addrlen, new_socket, max_clients = 300, activity, i, valread, sockfd;
 	int max_sd;
 	struct sockaddr_in address;
 

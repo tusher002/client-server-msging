@@ -23,13 +23,6 @@ using namespace std;
 const unsigned MAXBUFLEN = 512;
 int sockfd;
 
-void sig_term(int signo)
-{
-    cout<<"Closing";
-    close(sockfd);
-    exit(1);
-}
-
 void *process_connection(void *arg)
 {
     int n;
@@ -37,12 +30,13 @@ void *process_connection(void *arg)
     pthread_detach(pthread_self());
     while (1)
     {
-        string reply;
         n = read(sockfd, buf, MAXBUFLEN);
+        string reply(buf);
         if(reply == "Server Crashed")
         {
-            cout<<reply<<endl;
+            cout << "server closedd" << endl;
             close(sockfd);
+            exit(1);
         }
         if (n <= 0)
         {
@@ -63,6 +57,13 @@ void *process_connection(void *arg)
         cout << buf << endl;
         memset(buf, 0, sizeof buf);
     }
+}
+
+void signalHandler(int signo)
+{
+    cout<<"Closing";
+    close(sockfd);
+    exit(1);
 }
 
 //const unsigned serv_port = 5100;
@@ -155,12 +156,13 @@ int main()
         exit(1);
     }
 
+    signal(SIGINT, signalHandler);
+
     pthread_create(&tid, NULL, &process_connection, NULL);
 
     string oneline;
     while (getline(cin, oneline))
     {
-        signal(SIGINT, signalHandler);
         if (oneline == "exit")
         {
             close(sockfd);
