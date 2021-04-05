@@ -59,7 +59,7 @@ void *process_connection(void *arg)
     }
 }
 
-void signalHandler(int signo)
+void signalHandler(int signum)
 {
     cout<<"Closing";
     close(sockfd);

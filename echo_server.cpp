@@ -29,14 +29,12 @@ const unsigned MAXBUFLEN = 512;
 
 void signalHandler( int signum )
 {
-    map<string, int>::iterator user_it = user_info.begin();
     string reply;
     reply = "Server Crashed";
     for(int j; j<=300; j++)
     {
         if(client_socket[j] != 0)
-        send(client_socket[j], reply.c_str(), reply.length(), 0);
-        user_it++;
+            send(client_socket[j], reply.c_str(), reply.length(), 0);
     }
     sleep(1);
     exit(0);
