@@ -23,17 +23,12 @@ using namespace std;
 const unsigned MAXBUFLEN = 512;
 int sockfd;
 
-void sig_term(int signo)
+void signalHandler( int signum )
 {
     cout<<"Inform Server you are closing";
     close(sockfd);
     exit(1);
 }
-
-struct sigaction abc;
-        abc.sa_handler = sig_term;
-        sigemptyset(&abc.sa_mask);
-        abc.sa_flags = 0;
 
 void *process_connection(void *arg)
 {
@@ -48,7 +43,7 @@ void *process_connection(void *arg)
             if (n == 0)
             {
                 cout << "server closed" << endl;
-                sigaction(SIGINT, &abc, NULL);
+                signal(SIGINT, signalHandler);
             }
             else
             {

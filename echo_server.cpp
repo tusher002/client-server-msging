@@ -24,20 +24,15 @@
 using namespace std;
 
 map<string, int> user_info;
-int port;
+int port, sockfd;
 const unsigned MAXBUFLEN = 512;
 
-void sig_term(int signo, int sockfd)
+void signalHandler( int signum )
 {
-    cout<<"Inform Server you are closing";
+    cout<<"Server Informed";
     close(sockfd);
     exit(1);
 }
-
-struct sigaction abc;
-        abc.sa_handler = sig_term;
-        sigemptyset(&abc.sa_mask);
-        abc.sa_flags = 0;
 
 int main()
 {
@@ -67,8 +62,7 @@ int main()
         my_file.close();
     }
 	int opt = 1;
-	int master_socket , addrlen , new_socket , client_socket[300] ,
-		max_clients = 300 , activity, i , valread , sockfd;
+	int master_socket, addrlen, new_socket, client_socket[300], max_clients = 300, activity, i, valread;
 	int max_sd;
 	struct sockaddr_in address;
 
@@ -173,7 +167,7 @@ int main()
 					cout << "Client disconnected: IP == " << inet_ntoa(address.sin_addr);
                     cout << ", port == " << ntohs(address.sin_port) << endl;
 
-					sigaction(SIGINT, &abc, NULL, sockfd);
+					signal(SIGINT, signalHandler);
 					client_socket[i] = 0;
 				}
 
