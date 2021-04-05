@@ -23,15 +23,20 @@ using namespace std;
 const unsigned MAXBUFLEN = 512;
 int sockfd;
 
+void sig_term(int signo)
+{
+    cout<<"Inform Server you are closing";
+    close(sockfd);
+    exit(1);
+}
+
 void *process_connection(void *arg)
 {
-    cout<<"-----------------------10"<<endl;
     int n;
     char buf[MAXBUFLEN];
     pthread_detach(pthread_self());
     while (1)
     {
-        cout<<"-----------------------11"<<endl;
         n = read(sockfd, buf, MAXBUFLEN);
         if (n <= 0)
         {
@@ -47,18 +52,53 @@ void *process_connection(void *arg)
             // we directly exit the whole process.
             exit(1);
         }
-        cout<<"-----------------------12"<<endl;
         buf[n] = '\0';
         cout << buf << endl;
         memset(buf, 0, sizeof buf);
-        cout<<"-----------------------13"<<endl;
     }
 }
 
 //const unsigned serv_port = 5100;
 
-int main(int argc, char **argv)
+int main()
 {
+    string ip, port;
+    fstream my_file;
+    my_file.open("chat_configuration_file.txt", ios::in);
+    if (!my_file)
+    {
+        cout << "File not found"<<endl<<endl;
+    }
+    else
+    {
+        regex p_reg("(servport)(.*)");
+        regex i_reg("(servhost)(.*)");
+        string line;
+        while ( getline (my_file, line) )
+        {
+            if ( regex_match(line, i_reg) )
+            {
+                string delimiter = ":";
+                size_t pos = 0;
+                string token;
+                while ((pos = line.find(delimiter)) != std::string::npos)
+                {
+                    ip = line.erase(0, pos + delimiter.length());
+                }
+            }
+            if ( regex_match(line, p_reg) )
+            {
+                string delimiter = ":";
+                size_t pos = 0;
+                string token;
+                while ((pos = line.find(delimiter)) != std::string::npos)
+                {
+                    port = line.erase(0, pos + delimiter.length());
+                }
+            }
+        }
+        my_file.close();
+    }
     bool logged = 0;
     char buf[MAXBUFLEN];
 	char buf1[MAXBUFLEN];
@@ -74,19 +114,13 @@ int main(int argc, char **argv)
     struct addrinfo hints, *res, *ressave;
     pthread_t tid;
 
-    if (argc != 3)
-    {
-        cout << "echo_client server_name_or_ip port" << endl;
-        exit(1);
-    }
-
-    cout << argv[1] << " " << argv[2] << endl;
+    cout << ip << " " << port << endl;
 
     bzero(&hints, sizeof(struct addrinfo));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    if ((rv = getaddrinfo(argv[1], argv[2], &hints, &res)) != 0)
+    if ((rv = getaddrinfo(ip, port, &hints, &res)) != 0)
     {
         cout << "getaddrinfo wrong: " << gai_strerror(rv) << endl;
         exit(1);
@@ -119,7 +153,6 @@ int main(int argc, char **argv)
     string oneline;
     while (getline(cin, oneline))
     {
-        cout<<"-----------------------1"<<endl;
         if (oneline == "exit")
         {
             close(sockfd);
@@ -127,7 +160,6 @@ int main(int argc, char **argv)
         }
         else
         {
-            cout<<"-----------------------2"<<endl;
             string command;
             command = oneline;
             command = command + " ";
@@ -143,26 +175,26 @@ int main(int argc, char **argv)
 
             if(cmd1 == "login")
             {
-                cout<<"-----------------------3"<<endl;
                 write(sockfd, oneline.c_str(), oneline.length());
                 logged = 1;
             }
             else if(cmd1 == "logout" && logged == 1)
             {
-                cout<<"-----------------------6"<<endl;
                 write(sockfd, oneline.c_str(), oneline.length());
                 logged = 0;
             }
             else if(cmd1 == "chat" && logged == 1)
             {
-                cout<<"-----------------------5"<<endl;
                 write(sockfd, oneline.c_str(), oneline.length());
+            }
+            else if((cmd1 != "chat" && cmd1 == "logout") && logged == 1)
+            {
+                cout<<"Invalid command"<<endl;
             }
             else
             {
                 cout<<"You need to log in first"<<endl;
             }
-            cout<<"-----------------------4"<<endl;
         }
     }
     exit(0);
