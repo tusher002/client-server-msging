@@ -23,9 +23,9 @@ using namespace std;
 const unsigned MAXBUFLEN = 512;
 int sockfd;
 
-void signalHandler( int signum )
+void sig_term(int signo)
 {
-    cout<<"Inform Server you are closing";
+    cout<<"Closing";
     close(sockfd);
     exit(1);
 }
@@ -37,20 +37,28 @@ void *process_connection(void *arg)
     pthread_detach(pthread_self());
     while (1)
     {
+        string reply;
         n = read(sockfd, buf, MAXBUFLEN);
+        if(reply == "Server Crashed")
+        {
+            cout<<reply<<endl;
+            close(sockfd);
+        }
         if (n <= 0)
         {
             if (n == 0)
             {
                 cout << "server closed" << endl;
-                signal(SIGINT, signalHandler);
             }
             else
             {
                 cout << "something wrong" << endl;
             }
-
+            close(sockfd);
+            // we directly exit the whole process.
+            exit(1);
         }
+
         buf[n] = '\0';
         cout << buf << endl;
         memset(buf, 0, sizeof buf);
@@ -152,6 +160,7 @@ int main()
     string oneline;
     while (getline(cin, oneline))
     {
+        signal(SIGINT, signalHandler);
         if (oneline == "exit")
         {
             close(sockfd);

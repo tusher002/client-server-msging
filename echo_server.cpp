@@ -24,14 +24,21 @@
 using namespace std;
 
 map<string, int> user_info;
-int port, sockfd;
+int port;
 const unsigned MAXBUFLEN = 512;
 
 void signalHandler( int signum )
 {
-    cout<<"Server Informed";
-    close(sockfd);
-    exit(1);
+    map<string, int>::iterator user_it = user_info.begin();
+    string reply;
+    reply = "Server Crashed";
+    while(user_it != user_info.end())
+    {
+        send(user_it->second, reply.c_str(), reply.length(), 0);
+        user_it++;
+    }
+    sleep(2);
+    exit(0);
 }
 
 int main()
@@ -62,7 +69,8 @@ int main()
         my_file.close();
     }
 	int opt = 1;
-	int master_socket, addrlen, new_socket, client_socket[300], max_clients = 300, activity, i, valread;
+	int master_socket , addrlen , new_socket , client_socket[300] ,
+		max_clients = 300 , activity, i , valread , sockfd;
 	int max_sd;
 	struct sockaddr_in address;
 
@@ -109,6 +117,7 @@ int main()
 
 	while(1)
 	{
+	    signal(SIGINT, signalHandler);
 		FD_ZERO(&readfds);
 
 		FD_SET(master_socket, &readfds);
@@ -167,7 +176,7 @@ int main()
 					cout << "Client disconnected: IP == " << inet_ntoa(address.sin_addr);
                     cout << ", port == " << ntohs(address.sin_port) << endl;
 
-					signal(SIGINT, signalHandler);
+					close( sockfd );
 					client_socket[i] = 0;
 				}
 
