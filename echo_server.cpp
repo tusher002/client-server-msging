@@ -27,6 +27,18 @@ map<string, int> user_info;
 int port;
 const unsigned MAXBUFLEN = 512;
 
+void sig_term(int signo, int sockfd)
+{
+    cout<<"Inform Server you are closing";
+    close(sockfd);
+    exit(1);
+}
+
+struct sigaction abc;
+        abc.sa_handler = sig_term;
+        sigemptyset(&abc.sa_mask);
+        abc.sa_flags = 0;
+
 int main()
 {
     fstream my_file;
@@ -161,7 +173,7 @@ int main()
 					cout << "Client disconnected: IP == " << inet_ntoa(address.sin_addr);
                     cout << ", port == " << ntohs(address.sin_port) << endl;
 
-					close( sockfd );
+					sigaction(SIGINT, &abc, NULL, sockfd);
 					client_socket[i] = 0;
 				}
 

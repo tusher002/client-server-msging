@@ -30,6 +30,11 @@ void sig_term(int signo)
     exit(1);
 }
 
+struct sigaction abc;
+        abc.sa_handler = sig_term;
+        sigemptyset(&abc.sa_mask);
+        abc.sa_flags = 0;
+
 void *process_connection(void *arg)
 {
     int n;
@@ -43,14 +48,13 @@ void *process_connection(void *arg)
             if (n == 0)
             {
                 cout << "server closed" << endl;
+                sigaction(SIGINT, &abc, NULL);
             }
             else
             {
                 cout << "something wrong" << endl;
             }
-            close(sockfd);
-            // we directly exit the whole process.
-            exit(1);
+
         }
         buf[n] = '\0';
         cout << buf << endl;
@@ -120,7 +124,7 @@ int main()
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    if ((rv = getaddrinfo(ip, port, &hints, &res)) != 0)
+    if ((rv = getaddrinfo(ip.c_str(), port.c_str(), &hints, &res)) != 0)
     {
         cout << "getaddrinfo wrong: " << gai_strerror(rv) << endl;
         exit(1);
