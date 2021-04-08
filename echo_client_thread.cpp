@@ -34,7 +34,7 @@ void *process_connection(void *arg)
         string reply(buf);
         if(reply == "Server Crashed")
         {
-            cout << "server closedd" << endl;
+            cout << "server closed" << endl;
             close(sockfd);
             exit(1);
         }
@@ -61,7 +61,6 @@ void *process_connection(void *arg)
 
 void signalHandler(int signum)
 {
-    cout<<"Closing";
     close(sockfd);
     exit(1);
 }

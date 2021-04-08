@@ -31,7 +31,7 @@ void signalHandler( int signum )
 {
     string reply;
     reply = "Server Crashed";
-    for(int j; j<=300; j++)
+    for(int j=0; j<=300; j++)
     {
         if(client_socket[j] != 0)
             send(client_socket[j], reply.c_str(), reply.length(), 0);
