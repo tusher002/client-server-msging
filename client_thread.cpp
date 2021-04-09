@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
     string oneline;
     while (getline(cin, oneline))
     {
-        if (oneline == "exit")
+        if (oneline == "exit"  && logged == 0)
         {
             close(sockfd);
             return 0;
@@ -199,6 +199,10 @@ int main(int argc, char* argv[])
             else if((cmd1 == "chat" || cmd1 == "logout") && logged != 1)
             {
                 cout<<"You need to log in first"<<endl;
+            }
+            else if (oneline == "exit"  && logged == 1)
+            {
+                cout<<"You need to logout first"<<endl;
             }
             else
             {
