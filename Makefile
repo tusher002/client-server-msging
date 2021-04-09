@@ -1,4 +1,3 @@
 all:
-	gcc6 echo_server.cpp -o b.out -lstdc++
-	gcc6 -pthread echo_client_thread.cpp -o c.out -lstdc++
-	./b.out
+	gcc6 server_select.cpp -o s.out -lstdc++
+	gcc6 -pthread client_thread.cpp -o c.out -lstdc++

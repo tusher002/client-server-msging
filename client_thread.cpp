@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
             cmd1 = cmd.erase(pos1, len);
             cmd2 = command.erase(0, pos1+1);
 
-            if(cmd1 == "login")
+            if(cmd1 == "login"  && logged == 0)
             {
                 write(sockfd, oneline.c_str(), oneline.length());
                 logged = 1;
@@ -196,13 +196,13 @@ int main(int argc, char* argv[])
             {
                 write(sockfd, oneline.c_str(), oneline.length());
             }
-            else if((cmd1 != "chat" && cmd1 == "logout") && logged == 1)
+            else if((cmd1 == "chat" || cmd1 == "logout") && logged != 1)
             {
-                cout<<"Invalid command"<<endl;
+                cout<<"You need to log in first"<<endl;
             }
             else
             {
-                cout<<"You need to log in first"<<endl;
+                cout<<"Invalid command"<<endl;
             }
         }
     }

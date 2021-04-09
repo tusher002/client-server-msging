@@ -43,7 +43,7 @@ void signalHandler( int signum )
 int main()
 {
     fstream my_file;
-    my_file.open("configuration_file.txt", ios::in);
+    my_file.open("server_configuration_file.txt", ios::in);
     if (!my_file)
     {
         cout << "File not found"<<endl<<endl;
