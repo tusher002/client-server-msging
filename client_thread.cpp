@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 {
     string ip, port;
     fstream my_file;
-    my_file.open("chat_configuration_file.txt", ios::in);
+    my_file.open("client_configuration_file.txt", ios::in);
     if (!my_file)
     {
         cout << "File not found"<<endl<<endl;
