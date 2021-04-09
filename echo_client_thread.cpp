@@ -18,7 +18,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <bits/stdc++.h>
-#include <gtkmm.h>
 
 using namespace std;
 const unsigned MAXBUFLEN = 512;
@@ -70,13 +69,6 @@ void signalHandler(int signum)
 
 int main(int argc, char* argv[])
 {
-    Gtk:Main kit(argc, argv);
-    Gtk::Window window;
-    window.set_default_size(600, 360);
-    window.set_title("Chatting App");
-    window.set_position(Gtk::WIN_POS_CENTER);
-    window.set_border_width(10);
-    Gtk::Main::run(window);
     string ip, port;
     fstream my_file;
     my_file.open("chat_configuration_file.txt", ios::in);
